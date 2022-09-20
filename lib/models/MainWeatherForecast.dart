@@ -1,24 +1,25 @@
 class MainWeatherForecast {
-  double temp;
-  double feels_like;
-  double temp_min;
-  double temp_max;
-  int pressure;
-  int sea_level;
-  int grnd_level;
-  int humidity;
+  double? temp;
+  double? feels_like;
+  double? temp_min;
+  double? temp_max;
+  int? pressure;
+  int? sea_level;
+  int? grnd_level;
+  int? humidity;
+
   //double temp_kf;
 
-  MainWeatherForecast(
-      {required this.temp,
-      required this.feels_like,
-      required this.temp_min,
-      required this.temp_max,
-      required this.pressure,
-      required this.sea_level,
-      required this.grnd_level,
-      required this.humidity,
-      });
+  MainWeatherForecast({
+     this.temp,
+     this.feels_like,
+     this.temp_min,
+     this.temp_max,
+     this.pressure,
+     this.sea_level,
+     this.grnd_level,
+     this.humidity,
+  });
 
   factory MainWeatherForecast.fromJson(Map<String, dynamic> json) => MainWeatherForecast(
         temp: json["temp"],
@@ -26,11 +27,8 @@ class MainWeatherForecast {
         temp_min: json["temp_min"],
         temp_max: json["temp_max"],
         pressure: json["pressure"],
-        humidity: json["humidity"],
         sea_level: json["sea_level"],
         grnd_level: json["grnd_level"],
-
+        humidity: json["humidity"],
       );
-
-
 }

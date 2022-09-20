@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
@@ -19,16 +20,21 @@ class HomePage extends StatefulWidget {
 
 class HomePageState extends State<HomePage> {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
+
   FavoriteModel get favoriteModel => getIt<FavoriteModel>();
+  DateTime ctime = DateTime.now();
 
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
-    return Consumer<HomePageModel>(
-      builder: (context, model, child) => Scaffold(
-        key: _scaffoldKey,
-        drawer: const AppDrawer(),
-        body: buildHomeView(context, size),
+    return WillPopScope(
+      onWillPop:_backPressed,
+      child: Consumer<HomePageModel>(
+        builder: (context, model, child) => Scaffold(
+          key: _scaffoldKey,
+          drawer: const AppDrawer(),
+          body: buildHomeView(context, size),
+        ),
       ),
     );
   }
@@ -93,7 +99,7 @@ class HomePageState extends State<HomePage> {
                                                       color: Colors.white,
                                                       size: 40,
                                                     ),
-                                                    onPressed: () async{
+                                                    onPressed: () async {
                                                       //Save location
                                                       Favorite favorite = Favorite(
                                                           placeName: weatherViewModel.weatherResponse.name,
@@ -148,10 +154,7 @@ class HomePageState extends State<HomePage> {
                                             child: Row(
                                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                               children: [
-                                                buildForecastToday(
-                                                    formatTemperature(weatherViewModel.weatherResponse.main.temp_min),
-                                                    "min",
-                                                    size),
+                                                buildForecastToday(formatTemperature(weatherViewModel.weatherResponse.main.temp_min), "min", size),
                                                 buildForecastToday(
                                                   formatTemperature(weatherViewModel.weatherResponse.main.temp),
                                                   "Current",
@@ -180,9 +183,9 @@ class HomePageState extends State<HomePage> {
                                         child: Column(
                                             children: weatherViewModel.weatherItems
                                                 .map((item) => buildFiveDayForecast(
-                                                      getDayOfTheWeek(item.dt), //day
-                                                      weatherViewModel.getWeatherConditionIcon(item.weather[0].main), //min temperature
-                                                      formatTemperature(item.main.temp),
+                                                      getDayOfTheWeek(item.dt!), //day
+                                                      weatherViewModel.getWeatherConditionIcon(item.weather![0].main), //min temperature
+                                                      formatTemperature(item.main!.temp!),
                                                       size,
                                                     ))
                                                 .toList())),
@@ -273,5 +276,16 @@ class HomePageState extends State<HomePage> {
 
   Future<void> refreshWeather(HomePageModel homePageModel, BuildContext context) {
     return homePageModel.getLatestWeather();
+  }
+
+  Future<bool> _backPressed() {
+    DateTime now = DateTime.now();
+    if (now.difference(ctime) > const Duration(seconds: 2)) {
+      ctime = now;
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Press Back Button Again to Exit'))); //scaffold message, you can show Toast message too.
+      return Future.value(false);
+    }
+    SystemNavigator.pop();
+    return Future.value(true);
   }
 }

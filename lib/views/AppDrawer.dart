@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:weather_app/views/FavoritesPage.dart';
+import 'package:weather_app/views/MultipleLocationMapScreen.dart';
 
 import '../utils/Globals.dart';
 import '../viewmodel/HomePageModel.dart';
 import 'HomePage.dart';
-import 'MapScreen.dart';
 
 class AppDrawer extends StatefulWidget {
   const AppDrawer({Key? key}) : super(key: key);
@@ -69,7 +69,7 @@ class _AppDrawerState extends State<AppDrawer> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => const MapScreen(),
+                  builder: (context) => const MultipleLocationMapScreen(),
                 ),
               );
             },

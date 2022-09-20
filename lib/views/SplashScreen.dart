@@ -15,8 +15,6 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderStateMixin {
-  var _visible = true;
-
   late AnimationController animationController;
   late Animation<double> animation;
 
@@ -42,16 +40,17 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
   void initState() {
     super.initState();
     registerAllViewModels();
-    refreshWeather();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      refreshWeather();
+    });
+
     animationController = AnimationController(
       vsync: this,
       duration: const Duration(seconds: 2),
     );
     animation = CurvedAnimation(parent: animationController, curve: Curves.easeOut);
     animationController.forward();
-    setState(() {
-      _visible = !_visible;
-    });
+
     startTime();
   }
 
@@ -68,8 +67,8 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
             children: <Widget>[
               Image.asset(
                 'assets/images/dvt.png',
-                width: size.width/2,
-                height: size.height/2,
+                width: size.width / 2,
+                height: size.height / 2,
               ),
             ],
           ),

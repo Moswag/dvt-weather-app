@@ -1,9 +1,6 @@
 import 'dart:ui';
-
 import 'package:flutter/foundation.dart';
-import 'package:location/location.dart';
 import 'package:weather_app/models/ForecastResponse.dart';
-import 'package:weather_app/models/Weather.dart';
 import 'package:weather_app/services/OpenWeatherService.dart';
 import 'package:weather_app/utils/Constants.dart';
 
@@ -74,8 +71,8 @@ class HomePageModel with ChangeNotifier {
 
   List<WeatherItem> filterList(ForecastResponse forecastResponse) {
     var currentWeatherItem = forecastResponse.list[0];
-    var subSequence = currentWeatherItem.dt_txt.substring(11, currentWeatherItem.dt_txt.length);
-    return forecastResponse.list.where((item) => item.dt_txt.contains(subSequence)).toList();
+    var subSequence = currentWeatherItem.dt_txt!.substring(11, currentWeatherItem.dt_txt!.length);
+    return forecastResponse.list.where((item) => item.dt_txt!.contains(subSequence)).toList();
   }
 
   void setRequestPendingState(bool isPending) {
@@ -92,12 +89,14 @@ class HomePageModel with ChangeNotifier {
       Reply<WeatherResponse> weatherResponseReply = await openWeatherService.getCurrentWeather().catchError((onError) => isRequestError = true);
       if (weatherResponseReply.isSuccess200Only) {
         weatherResponse = weatherResponseReply.data;
+        Reply<ForecastResponse> forecastResponseReply = await openWeatherService.getForecast().catchError((onError) => isRequestError = true);
+        if (forecastResponseReply.isSuccess200Only) {
+          ForecastResponse forecastResponse = forecastResponseReply.data;
+          weatherItemsFiltered = filterList(forecastResponse);
+        }
       }
-      Reply<ForecastResponse> forecastResponseReply = await openWeatherService.getForecast().catchError((onError) => isRequestError = true);
-      if (forecastResponseReply.isSuccess200Only) {
-        ForecastResponse forecastResponse = forecastResponseReply.data;
-        weatherItemsFiltered = filterList(forecastResponse);
-      }
+
+
     } catch (e) {
       isRequestError = true;
     }

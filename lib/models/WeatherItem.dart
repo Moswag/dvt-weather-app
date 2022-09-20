@@ -8,24 +8,24 @@ import 'Wind.dart';
 
 
 class WeatherItem {
-  int dt;
-  MainWeatherForecast main;
-  List<Weather> weather;
-  Clouds clouds;
-  int visibility;
-  int pop;
-  Sys2 sys;
-  String dt_txt;
+  int? dt;
+  MainWeatherForecast? main;
+  List<Weather>? weather;
+  Clouds? clouds;
+  int? visibility;
+  int? pop;
+  Sys2? sys;
+  String? dt_txt;
 
   WeatherItem(
-      {required this.dt,
-      required this.main,
-      required this.weather,
-      required this.clouds,
-      required this.visibility,
-      required this.pop,
-      required this.sys,
-      required this.dt_txt});
+      {this.dt,
+       this.main,
+       this.weather,
+       this.clouds,
+       this.visibility,
+       this.pop,
+       this.sys,
+       this.dt_txt});
 
   factory WeatherItem.fromJson(Map<String, dynamic> json) => WeatherItem(
     dt: json["dt"],
@@ -37,12 +37,5 @@ class WeatherItem {
     sys: Sys2.fromJson(json["sys"]),
     dt_txt: json["dt_txt"],
   );
-
-  @override
-  bool operator ==(Object other) => identical(this, other) || other is WeatherItem && runtimeType == other.runtimeType && getDayOfTheWeek(dt) == getDayOfTheWeek(other.dt);
-
-  @override
-  int get hashCode => dt.hashCode;
-
 
 }
