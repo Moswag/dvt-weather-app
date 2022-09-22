@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:logger/logger.dart';
 import 'package:overlay_support/overlay_support.dart';
 import 'package:weather_app/viewmodel/FavouritesModel.dart';
 import 'package:weather_app/viewmodel/HomePageModel.dart';
@@ -11,6 +12,7 @@ import '../models/ErrorResponse.dart';
 import 'Reply.dart';
 
 GetIt getIt = GetIt.instance;
+var logger = Logger();
 
 registerAllViewModels() {
   getIt.registerSingleton<HomePageModel>(HomePageModel());

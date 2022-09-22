@@ -1,6 +1,6 @@
 import 'package:intl/intl.dart';
 
-String formatTemperature(double temperature){
+String formatTemperature(num temperature){
   return "${temperature.toStringAsFixed(1)}\u00B0";
 }
 

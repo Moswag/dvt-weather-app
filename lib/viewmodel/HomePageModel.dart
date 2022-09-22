@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:weather_app/models/ForecastResponse.dart';
 import 'package:weather_app/services/OpenWeatherService.dart';
 import 'package:weather_app/utils/Constants.dart';
+import 'package:weather_app/utils/Globals.dart';
 
 import '../models/Coordinates.dart';
 import '../models/WeatherItem.dart';
@@ -83,31 +84,37 @@ class HomePageModel with ChangeNotifier {
   Future<WeatherResponse?> getLatestWeather() async {
     setRequestPendingState(true);
     isRequestError = false;
-    late WeatherResponse weatherResponse;
-    late List<WeatherItem> weatherItemsFiltered;
+    WeatherResponse? weatherResponse;
+    ForecastResponse? forecastResponse;
     try {
-      Reply<WeatherResponse> weatherResponseReply = await openWeatherService.getCurrentWeather().catchError((onError) => isRequestError = true);
+      Reply<WeatherResponse> weatherResponseReply = await openWeatherService.getCurrentWeather().catchError((onError) {
+        logger.d(onError);
+        isRequestError = true;
+      });
       if (weatherResponseReply.isSuccess200Only) {
         weatherResponse = weatherResponseReply.data;
-        Reply<ForecastResponse> forecastResponseReply = await openWeatherService.getForecast().catchError((onError) => isRequestError = true);
+        Reply<ForecastResponse> forecastResponseReply = await openWeatherService.getForecast().catchError((onError) {
+          logger.d(onError);
+          isRequestError = true;
+        });
         if (forecastResponseReply.isSuccess200Only) {
-          ForecastResponse forecastResponse = forecastResponseReply.data;
-          weatherItemsFiltered = filterList(forecastResponse);
+          forecastResponse = forecastResponseReply.data;
         }
       }
-
-
     } catch (e) {
+      logger.d(e);
       isRequestError = true;
     }
 
-    isWeatherLoaded = true;
-    updateModel(weatherResponse, weatherItemsFiltered);
-    setWeatherCondition(weatherResponse);
-    setBackgroundImage(weatherResponse);
-    setBackgroundColor(weatherResponse);
-    setRequestPendingState(false);
-    notifyListeners();
+    if (weatherResponse != null && forecastResponse != null) {
+      isWeatherLoaded = true;
+      updateModel(weatherResponse, filterList(forecastResponse));
+      setWeatherCondition(weatherResponse);
+      setBackgroundImage(weatherResponse);
+      setBackgroundColor(weatherResponse);
+      setRequestPendingState(false);
+      notifyListeners();
+    }
     return weatherResponse;
   }
 
